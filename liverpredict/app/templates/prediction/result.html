@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Prediction Result{% endblock %}
+{% block page_title %}Prediction Result{% endblock %}
+{% block content %}
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="glass section-card text-center">
+      <span class="badge-soft risk-pill risk-{{ record.risk_level|lower }} mb-3 d-inline-flex">
+        <i class="fa-solid {{ 'fa-circle-check' if record.risk_level == 'Low' else 'fa-triangle-exclamation' if record.risk_level == 'Medium' else 'fa-circle-exclamation' }}"></i>
+        {{ record.risk_level }} Risk
+      </span>
+      <div class="confidence-ring mx-auto" data-percent="{{ record.confidence }}">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle class="ring-bg" cx="70" cy="70" r="58"></circle>
+          <circle class="ring-fg" cx="70" cy="70" r="58"
+            style="stroke: {{ 'var(--success)' if record.risk_level == 'Low' else 'var(--warning)' if record.risk_level == 'Medium' else 'var(--danger)' }}"></circle>
+        </svg>
+        <div class="ring-label">
+          <span class="ring-value">{{ record.confidence }}%</span>
+          <span class="ring-caption">CONFIDENCE</span>
+        </div>
+      </div>
+      <h2 class="h5 fw-bold mt-3 mb-1">{{ record.prediction }}</h2>
+      <p class="text-soft mb-4" style="font-size:.85rem;">{{ record.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('prediction.download_report', record_id=record.id) }}" class="btn btn-brand"><i class="fa-solid fa-file-pdf"></i> Download PDF Report</a>
+        <a href="{{ url_for('prediction.new') }}" class="btn btn-ghost"><i class="fa-solid fa-rotate"></i> Run Another Test</a>
+      </div>
+    </div>
+
+    <div class="glass section-card mt-4">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-vial text-primary me-2"></i>Submitted Values</h3>
+      <ul class="list-clean" style="font-size:.85rem;">
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">Age / Gender</span><strong>{{ record.age|int }} / {{ record.gender }}</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">Total Bilirubin</span><strong>{{ record.total_bilirubin }} mg/dL</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">Direct Bilirubin</span><strong>{{ record.direct_bilirubin }} mg/dL</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">Alkaline Phosphatase</span><strong>{{ record.alkaline_phosphotase }} IU/L</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">ALT</span><strong>{{ record.alt }} IU/L</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">AST</span><strong>{{ record.ast }} IU/L</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">Total Protein</span><strong>{{ record.total_proteins }} g/dL</strong></li>
+        <li class="d-flex justify-content-between py-2 border-bottom" style="border-color:var(--surface-border) !important;"><span class="text-soft">Albumin</span><strong>{{ record.albumin }} g/dL</strong></li>
+        <li class="d-flex justify-content-between py-2"><span class="text-soft">A/G Ratio</span><strong>{{ record.ag_ratio }}</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="glass section-card mb-4">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-stethoscope text-primary me-2"></i>Health Interpretation</h3>
+      <p class="text-soft mb-0">{{ record.interpretation }}</p>
+    </div>
+
+    <div class="glass section-card mb-4">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-magnifying-glass-chart text-primary me-2"></i>Key Contributing Factors</h3>
+      <div class="d-flex flex-column gap-2">
+        {% for factor in record.factors_list() %}
+        <div class="d-flex align-items-center gap-3 p-3" style="background:var(--bg); border-radius:12px; border:1px solid var(--surface-border);">
+          <span class="stat-icon bg-grad-warning" style="width:34px; height:34px; font-size:.8rem; margin-bottom:0;"><i class="fa-solid fa-circle-exclamation"></i></span>
+          <span style="font-size:.88rem;">{{ factor }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="glass section-card">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-list-check text-primary me-2"></i>Personalized Recommendations</h3>
+      <div class="d-flex flex-column gap-2">
+        {% for rec in record.recommendations_list() %}
+        <div class="d-flex align-items-start gap-3 p-3" style="background:rgba(20,184,166,0.06); border-radius:12px; border:1px solid var(--surface-border);">
+          <i class="fa-solid fa-circle-check text-accent mt-1"></i>
+          <span style="font-size:.88rem;">{{ rec }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="alert mt-4 mb-0" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); border-radius:12px; font-size:.82rem; color:var(--ink-soft);">
+        <i class="fa-solid fa-circle-info text-warning me-1"></i>
+        This AI-generated assessment is a decision-support tool and does not replace a professional medical diagnosis. Please consult a licensed physician.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

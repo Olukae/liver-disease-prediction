@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="glass section-card text-center">
+      <span class="avatar mx-auto mb-3" style="width:72px; height:72px; font-size:1.5rem;">{{ current_user.initials }}</span>
+      <h2 class="h5 fw-bold mb-1">{{ current_user.full_name }}</h2>
+      <p class="text-soft mb-2" style="font-size:.86rem;">{{ current_user.email }}</p>
+      <span class="badge-soft badge-soft-primary">{{ "Administrator" if current_user.is_admin else "Patient" }}</span>
+      <div class="divider-soft my-3"></div>
+      <div class="text-start">
+        <div class="d-flex justify-content-between py-2"><span class="text-soft">Member since</span><strong>{{ current_user.created_at.strftime('%d %b %Y') }}</strong></div>
+        <div class="d-flex justify-content-between py-2"><span class="text-soft">Total predictions</span><strong>{{ current_user.predictions.count() }}</strong></div>
+        <div class="d-flex justify-content-between py-2"><span class="text-soft">Last login</span><strong>{{ current_user.last_login.strftime('%d %b %Y') if current_user.last_login else '—' }}</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="glass section-card mb-4">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-id-card text-primary me-2"></i>Personal Information</h3>
+      </div>
+      <form method="POST" action="{{ url_for('auth.profile') }}" novalidate data-loading-btn>
+        {{ form.hidden_tag() }}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.full_name.label }}</label>
+            {{ form.full_name(class="form-control") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.phone.label }}</label>
+            {{ form.phone(class="form-control") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.age.label }}</label>
+            {{ form.age(class="form-control") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ form.gender.label }}</label>
+            {{ form.gender(class="form-select") }}
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email Address</label>
+          <input type="text" class="form-control" value="{{ current_user.email }}" disabled>
+          <div class="text-faint mt-1" style="font-size:.78rem;">Email cannot be changed.</div>
+        </div>
+        {{ form.submit(class="btn btn-brand") }}
+      </form>
+    </div>
+
+    <div class="glass section-card">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-lock text-primary me-2"></i>Change Password</h3>
+      </div>
+      <form method="POST" action="{{ url_for('auth.change_password') }}" novalidate data-loading-btn>
+        {{ pwd_form.hidden_tag() }}
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label class="form-label">{{ pwd_form.current_password.label }}</label>
+            {{ pwd_form.current_password(class="form-control") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ pwd_form.new_password.label }}</label>
+            {{ pwd_form.new_password(class="form-control") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">{{ pwd_form.confirm_password.label }}</label>
+            {{ pwd_form.confirm_password(class="form-control") }}
+          </div>
+        </div>
+        {{ pwd_form.submit(class="btn btn-ghost") }}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

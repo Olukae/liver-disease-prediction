@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block page_title %}System Overview{% endblock %}
+{% block content %}
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card">
+      <div class="stat-icon bg-grad-primary"><i class="fa-solid fa-users"></i></div>
+      <div class="stat-value">{{ total_users }}</div>
+      <div class="stat-label">Total Patients</div>
+      <span class="stat-trend" style="background:rgba(34,197,94,0.12); color:var(--success);">
+        <i class="fa-solid fa-arrow-up"></i> +{{ new_users_week }} this week
+      </span>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card">
+      <div class="stat-icon bg-grad-accent"><i class="fa-solid fa-flask-vial"></i></div>
+      <div class="stat-value">{{ total_predictions }}</div>
+      <div class="stat-label">Total Predictions</div>
+      <span class="stat-trend" style="background:rgba(14,165,233,0.12); color:var(--secondary);">
+        <i class="fa-solid fa-arrow-up"></i> +{{ predictions_week }} this week
+      </span>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card">
+      <div class="stat-icon bg-grad-danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="stat-value">{{ high_risk }}</div>
+      <div class="stat-label">High Risk Cases</div>
+      <span class="stat-trend" style="background:rgba(239,68,68,0.1); color:var(--danger);">
+        {{ "%.0f"|format((high_risk/total_predictions*100) if total_predictions else 0) }}% of total
+      </span>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="glass stat-card">
+      <div class="stat-icon bg-grad-warning"><i class="fa-solid fa-gauge"></i></div>
+      <div class="stat-value">{{ avg_confidence }}%</div>
+      <div class="stat-label">Avg. Confidence</div>
+      <span class="stat-trend" style="background:rgba(245,158,11,0.12); color:var(--warning);">Across all predictions</span>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-4">
+    <div class="glass section-card h-100">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-chart-pie text-primary me-2"></i>Risk Distribution</h3>
+      </div>
+      <div style="height:220px; position:relative;">
+        <canvas id="riskDistributionChart"></canvas>
+      </div>
+      <div class="row text-center mt-3">
+        <div class="col"><div class="fw-bold text-success">{{ low_risk }}</div><div class="text-faint" style="font-size:.75rem;">Low</div></div>
+        <div class="col"><div class="fw-bold text-warning">{{ medium_risk }}</div><div class="text-faint" style="font-size:.75rem;">Medium</div></div>
+        <div class="col"><div class="fw-bold text-danger">{{ high_risk }}</div><div class="text-faint" style="font-size:.75rem;">High</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="glass section-card h-100">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-chart-line text-primary me-2"></i>Predictions (Last 14 Days)</h3>
+      </div>
+      <div style="height:250px; position:relative;">
+        <canvas id="predictionsTrendChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Tables -->
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="glass section-card">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>Latest Predictions</h3>
+        <a href="{{ url_for('admin.predictions') }}" class="btn btn-ghost btn-sm">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table-elegant">
+          <thead><tr><th>Patient</th><th>Result</th><th>Risk</th><th>Confidence</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for r in recent_predictions %}
+            <tr>
+              <td>
+                <div class="fw-bold" style="font-size:.85rem;">{{ r.user.full_name }}</div>
+                <div class="text-faint" style="font-size:.75rem;">{{ r.user.email }}</div>
+              </td>
+              <td style="font-size:.82rem;">{{ r.prediction }}</td>
+              <td><span class="risk-pill risk-{{ r.risk_level|lower }}">{{ r.risk_level }}</span></td>
+              <td>{{ r.confidence }}%</td>
+              <td style="font-size:.8rem; color:var(--ink-faint);">{{ r.created_at.strftime('%d %b %Y') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="glass section-card">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-user-plus text-primary me-2"></i>New Patients</h3>
+        <a href="{{ url_for('admin.users') }}" class="btn btn-ghost btn-sm">Manage</a>
+      </div>
+      <div class="d-flex flex-column gap-2">
+        {% for u in recent_users %}
+        <div class="d-flex align-items-center gap-3 p-2" style="border-radius:12px; background:var(--bg);">
+          <span class="avatar">{{ u.initials }}</span>
+          <div class="flex-grow-1 min-width-0">
+            <div class="fw-bold" style="font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ u.full_name }}</div>
+            <div class="text-faint" style="font-size:.75rem;">Joined {{ u.created_at.strftime('%d %b %Y') }}</div>
+          </div>
+          <span class="badge-soft badge-soft-primary">{{ u.predictions.count() }} tests</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="glass section-card mt-4">
+      <div class="card-header-row">
+        <h3 class="h6 fw-bold mb-0"><i class="fa-solid fa-download text-primary me-2"></i>Quick Exports</h3>
+      </div>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('admin.export_predictions_csv') }}" class="btn btn-ghost btn-sm"><i class="fa-solid fa-file-csv text-success me-2"></i>Export Predictions (.csv)</a>
+        <a href="{{ url_for('admin.export_users_csv') }}" class="btn btn-ghost btn-sm"><i class="fa-solid fa-file-csv text-primary me-2"></i>Export Patients (.csv)</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

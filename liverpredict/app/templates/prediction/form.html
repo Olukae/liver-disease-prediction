@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}New Prediction{% endblock %}
+{% block page_title %}New Liver Test Prediction{% endblock %}
+{% block content %}
+
+<div class="glass section-card prediction-form-card mx-auto" style="max-width:760px;">
+
+  <div class="step-tracker">
+    {% for label in ["Demographics", "Bilirubin & Enzymes", "Protein Panel", "Review"] %}
+    <div class="step-item {{ 'active' if loop.first }}" style="flex:1; text-align:center;">
+      <div class="step-dot mx-auto">{{ loop.index }}</div>
+      <div class="step-label">{{ label }}</div>
+    </div>
+    {% if not loop.last %}<div class="step-line"></div>{% endif %}
+    {% endfor %}
+  </div>
+
+  <form method="POST" id="predictionForm" novalidate data-loading-btn>
+    {{ form.hidden_tag() }}
+
+    <!-- Step 1: Demographics -->
+    <div class="form-step active">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-id-card text-primary me-2"></i>Patient Demographics</h3>
+      <div class="row">
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.age.label }}</label>
+          {{ form.age(class="form-control validate-field", placeholder="e.g. 45", **{"data-summary-label": "Age"}) }}
+          {% for e in form.age.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.gender.label }}</label>
+          {{ form.gender(class="form-select validate-field", **{"data-summary-label": "Gender"}) }}
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+        <button type="button" class="btn btn-brand" data-next>Continue <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 2: Bilirubin & Enzymes -->
+    <div class="form-step">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-droplet text-primary me-2"></i>Bilirubin &amp; Liver Enzymes</h3>
+      <div class="row">
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.total_bilirubin.label }}</label>
+          {{ form.total_bilirubin(class="form-control validate-field", placeholder="0.1 – 1.2 normal", **{"data-summary-label": "Total Bilirubin"}) }}
+        </div>
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.direct_bilirubin.label }}</label>
+          {{ form.direct_bilirubin(class="form-control validate-field", placeholder="0.0 – 0.3 normal", **{"data-summary-label": "Direct Bilirubin"}) }}
+        </div>
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.alkaline_phosphotase.label }}</label>
+          {{ form.alkaline_phosphotase(class="form-control validate-field", placeholder="44 – 147 normal", **{"data-summary-label": "Alkaline Phosphatase"}) }}
+        </div>
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.alt.label }}</label>
+          {{ form.alt(class="form-control validate-field", placeholder="7 – 56 normal", **{"data-summary-label": "ALT"}) }}
+        </div>
+        <div class="col-sm-6 mb-3">
+          <label class="form-label">{{ form.ast.label }}</label>
+          {{ form.ast(class="form-control validate-field", placeholder="5 – 40 normal", **{"data-summary-label": "AST"}) }}
+        </div>
+      </div>
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-ghost" data-prev><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn btn-brand" data-next>Continue <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 3: Protein Panel -->
+    <div class="form-step">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-dna text-primary me-2"></i>Protein Panel</h3>
+      <div class="row">
+        <div class="col-sm-4 mb-3">
+          <label class="form-label">{{ form.total_proteins.label }}</label>
+          {{ form.total_proteins(class="form-control validate-field", placeholder="6.0 – 8.3 normal", **{"data-summary-label": "Total Protein"}) }}
+        </div>
+        <div class="col-sm-4 mb-3">
+          <label class="form-label">{{ form.albumin.label }}</label>
+          {{ form.albumin(class="form-control validate-field", placeholder="3.5 – 5.0 normal", **{"data-summary-label": "Albumin"}) }}
+        </div>
+        <div class="col-sm-4 mb-3">
+          <label class="form-label">{{ form.ag_ratio.label }}</label>
+          {{ form.ag_ratio(class="form-control validate-field", placeholder="1.0 – 2.5 normal", **{"data-summary-label": "A/G Ratio"}) }}
+        </div>
+      </div>
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-ghost" data-prev><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button type="button" class="btn btn-brand" data-next>Review <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 4: Review -->
+    <div class="form-step">
+      <h3 class="h6 fw-bold mb-3"><i class="fa-solid fa-clipboard-check text-primary me-2"></i>Review &amp; Submit</h3>
+      <p class="text-soft mb-3" style="font-size:.86rem;">Confirm your values before running the AI prediction.</p>
+      <div id="reviewSummary" class="mb-3"></div>
+      <div class="d-flex justify-content-between mt-4">
+        <button type="button" class="btn btn-ghost" data-prev><i class="fa-solid fa-arrow-left"></i> Back</button>
+        {{ form.submit(class="btn btn-accent") }}
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/steps.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base_public.html" %}
+{% block title %}Create Account{% endblock %}
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-side">
+    <span class="brand-mark mb-4" style="background:rgba(255,255,255,0.2);"><i class="fa-solid fa-droplet-degree"></i></span>
+    <h2 class="font-display fw-bold mb-3" style="font-size:2.1rem;">Join LiverPredict AI</h2>
+    <p style="opacity:.92; max-width:420px;">Create a free account to start screening liver health with AI-backed predictions.</p>
+    <ul class="list-clean mt-4" style="opacity:.95;">
+      <li class="mb-3"><i class="fa-solid fa-check me-2"></i> Free, unlimited predictions</li>
+      <li class="mb-3"><i class="fa-solid fa-check me-2"></i> Your data stays in your private history</li>
+      <li class="mb-3"><i class="fa-solid fa-check me-2"></i> Takes less than 60 seconds to sign up</li>
+    </ul>
+  </div>
+  <div class="auth-form-col">
+    <div class="auth-wrap" style="min-height:auto; padding:0;">
+      <div class="glass auth-card" style="max-width:520px;">
+        <h1 class="h3 font-display fw-bold text-center mb-1">Create Your Account</h1>
+        <p class="text-soft text-center mb-4" style="font-size:.9rem;">Patient or healthcare personnel — all are welcome</p>
+
+        <form method="POST" novalidate data-loading-btn>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            <label class="form-label">{{ form.full_name.label }}</label>
+            <div class="input-icon-group">
+              <i class="fa-solid fa-user"></i>
+              {{ form.full_name(class="form-control", placeholder="Jane Doe") }}
+            </div>
+            {% for e in form.full_name.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">{{ form.age.label }}</label>
+              {{ form.age(class="form-control", placeholder="32") }}
+              {% for e in form.age.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">{{ form.gender.label }}</label>
+              {{ form.gender(class="form-select") }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.email.label }}</label>
+            <div class="input-icon-group">
+              <i class="fa-solid fa-envelope"></i>
+              {{ form.email(class="form-control", placeholder="you@example.com") }}
+            </div>
+            {% for e in form.email.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">{{ form.phone.label }}</label>
+            <div class="input-icon-group">
+              <i class="fa-solid fa-phone"></i>
+              {{ form.phone(class="form-control", placeholder="+1 555 000 0000") }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">{{ form.password.label }}</label>
+              {{ form.password(class="form-control", placeholder="At least 8 characters") }}
+              {% for e in form.password.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-sm-6 mb-3">
+              <label class="form-label">{{ form.confirm_password.label }}</label>
+              {{ form.confirm_password(class="form-control", placeholder="Repeat password") }}
+              {% for e in form.confirm_password.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+            </div>
+          </div>
+
+          {{ form.submit(class="btn btn-brand w-100 mt-2") }}
+        </form>
+
+        <p class="text-center text-soft mt-4 mb-0" style="font-size:.88rem;">
+          Already have an account? <a href="{{ url_for('auth.login') }}" class="fw-bold">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Health Tips{% endblock %}
+{% block page_title %}Liver Health Tips{% endblock %}
+{% block content %}
+<div class="row g-3">
+  {% for tip in tips %}
+  <div class="col-md-6 col-lg-4">
+    <div class="glass section-card h-100">
+      <div class="stat-icon bg-grad-accent"><i class="fa-solid {{ tip.icon }}"></i></div>
+      <h3 class="h6 fw-bold">{{ tip.title }}</h3>
+      <p class="text-soft mb-0" style="font-size:.88rem;">{{ tip.text }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

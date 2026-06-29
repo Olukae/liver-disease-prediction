@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}All Predictions{% endblock %}
+{% block page_title %}All Predictions{% endblock %}
+{% block content %}
+
+<div class="glass section-card mb-4">
+  <form method="GET" class="d-flex gap-3 align-items-end flex-wrap">
+    <div>
+      <label class="form-label">Filter by Risk</label>
+      <select name="risk" class="form-select" style="min-width:140px;">
+        <option value="">All Risks</option>
+        <option value="Low" {{ 'selected' if risk_filter == 'Low' }}>Low Risk</option>
+        <option value="Medium" {{ 'selected' if risk_filter == 'Medium' }}>Medium Risk</option>
+        <option value="High" {{ 'selected' if risk_filter == 'High' }}>High Risk</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-brand"><i class="fa-solid fa-filter"></i> Filter</button>
+    {% if risk_filter %}<a href="{{ url_for('admin.predictions') }}" class="btn btn-ghost">Clear</a>{% endif %}
+    <a href="{{ url_for('admin.export_predictions_csv') }}" class="btn btn-ghost ms-auto"><i class="fa-solid fa-download me-1"></i>Export CSV</a>
+  </form>
+</div>
+
+<div class="glass section-card">
+  <div class="card-header-row">
+    <h3 class="h6 fw-bold mb-0">{{ records|length }} record{{ 's' if records|length != 1 }}</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="table-elegant">
+      <thead>
+        <tr><th>#</th><th>Patient</th><th>Result</th><th>Risk</th><th>Confidence</th><th>Total Bili.</th><th>ALT</th><th>AST</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for r in records %}
+        <tr>
+          <td class="text-faint" style="font-size:.78rem;">{{ r.id }}</td>
+          <td>
+            <div class="fw-bold" style="font-size:.84rem;">{{ r.user.full_name }}</div>
+            <div class="text-faint" style="font-size:.74rem;">{{ r.user.email }}</div>
+          </td>
+          <td style="font-size:.82rem;">{{ r.prediction }}</td>
+          <td><span class="risk-pill risk-{{ r.risk_level|lower }}">{{ r.risk_level }}</span></td>
+          <td>{{ r.confidence }}%</td>
+          <td>{{ r.total_bilirubin }}</td>
+          <td>{{ r.alt }}</td>
+          <td>{{ r.ast }}</td>
+          <td style="font-size:.78rem; color:var(--ink-faint);">{{ r.created_at.strftime('%d %b %Y %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if not records %}
+  <div class="text-center py-5">
+    <i class="fa-solid fa-flask-vial fs-1 text-faint mb-3 d-block"></i>
+    <p class="text-soft">No predictions found.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

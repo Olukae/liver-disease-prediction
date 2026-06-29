@@ -1,0 +1,105 @@
+{
+  "best_model": "gradient_boosting",
+  "feature_order": [
+    "age",
+    "gender",
+    "total_bilirubin",
+    "direct_bilirubin",
+    "alkaline_phosphotase",
+    "alt",
+    "ast",
+    "total_proteins",
+    "albumin",
+    "ag_ratio"
+  ],
+  "feature_importances": {
+    "age": 0.1769,
+    "gender": 0.0053,
+    "total_bilirubin": 0.1581,
+    "direct_bilirubin": 0.0645,
+    "alkaline_phosphotase": 0.1742,
+    "alt": 0.1699,
+    "ast": 0.0777,
+    "total_proteins": 0.0545,
+    "albumin": 0.0701,
+    "ag_ratio": 0.0487
+  },
+  "normal_ranges": {
+    "total_bilirubin": [
+      0.1,
+      1.2,
+      "mg/dL"
+    ],
+    "direct_bilirubin": [
+      0.0,
+      0.3,
+      "mg/dL"
+    ],
+    "alkaline_phosphotase": [
+      44,
+      147,
+      "IU/L"
+    ],
+    "alt": [
+      7,
+      56,
+      "IU/L"
+    ],
+    "ast": [
+      5,
+      40,
+      "IU/L"
+    ],
+    "total_proteins": [
+      6.0,
+      8.3,
+      "g/dL"
+    ],
+    "albumin": [
+      3.5,
+      5.0,
+      "g/dL"
+    ],
+    "ag_ratio": [
+      1.0,
+      2.5,
+      "ratio"
+    ]
+  },
+  "medians": {
+    "age": 45.0,
+    "gender": 1.0,
+    "total_bilirubin": 1.0,
+    "direct_bilirubin": 0.3,
+    "alkaline_phosphotase": 208.0,
+    "alt": 35.0,
+    "ast": 42.0,
+    "total_proteins": 6.6,
+    "albumin": 3.1,
+    "ag_ratio": 0.93
+  },
+  "evaluation": {
+    "random_forest": {
+      "cv_f1_mean": 0.7325,
+      "test_accuracy": 0.735,
+      "test_f1": 0.8,
+      "test_roc_auc": 0.7959
+    },
+    "gradient_boosting": {
+      "cv_f1_mean": 0.8068,
+      "test_accuracy": 0.6838,
+      "test_f1": 0.7978,
+      "test_roc_auc": 0.7495
+    },
+    "logistic_regression": {
+      "cv_f1_mean": 0.6837,
+      "test_accuracy": 0.735,
+      "test_f1": 0.7862,
+      "test_roc_auc": 0.8303
+    }
+  },
+  "n_samples": 583,
+  "n_positive": 416,
+  "n_negative": 167,
+  "trained_on": "Indian Liver Patient Dataset (ILPD), UCI Machine Learning Repository"
+}

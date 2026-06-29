@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block page_title %}Manage Patients{% endblock %}
+{% block content %}
+
+<div class="glass section-card mb-4">
+  <form method="GET" class="d-flex gap-2">
+    <div class="input-icon-group flex-grow-1">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" name="q" class="form-control" placeholder="Search by name or email..." value="{{ search }}">
+    </div>
+    <button type="submit" class="btn btn-brand"><i class="fa-solid fa-search"></i> Search</button>
+    {% if search %}<a href="{{ url_for('admin.users') }}" class="btn btn-ghost">Clear</a>{% endif %}
+  </form>
+</div>
+
+<div class="glass section-card">
+  <div class="card-header-row">
+    <h3 class="h6 fw-bold mb-0">{{ users|length }} Patient{{ 's' if users|length != 1 }}</h3>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin.export_users_csv') }}" class="btn btn-ghost btn-sm"><i class="fa-solid fa-download me-1"></i>Export CSV</a>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table-elegant">
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>Contact</th>
+          <th>Profile</th>
+          <th>Predictions</th>
+          <th>Status</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <span class="avatar">{{ u.initials }}</span>
+              <div>
+                <div class="fw-bold" style="font-size:.88rem;">{{ u.full_name }}</div>
+                <div class="text-faint" style="font-size:.75rem;">ID #{{ u.id }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-size:.84rem;">{{ u.email }}</div>
+            <div class="text-faint" style="font-size:.75rem;">{{ u.phone or '—' }}</div>
+          </td>
+          <td style="font-size:.84rem;">{{ u.age or '—' }} / {{ u.gender or '—' }}</td>
+          <td>
+            <span class="badge-soft badge-soft-primary">{{ u.predictions.count() }}</span>
+          </td>
+          <td>
+            {% if u.is_active_account %}
+              <span class="risk-pill risk-low"><i class="fa-solid fa-circle" style="font-size:.5rem;"></i> Active</span>
+            {% else %}
+              <span class="risk-pill risk-high"><i class="fa-solid fa-circle" style="font-size:.5rem;"></i> Inactive</span>
+            {% endif %}
+          </td>
+          <td style="font-size:.8rem; color:var(--ink-faint);">{{ u.created_at.strftime('%d %b %Y') }}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <form method="POST" action="{{ url_for('admin.toggle_user_active', user_id=u.id) }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-ghost btn-sm" title="{{ 'Deactivate' if u.is_active_account else 'Activate' }}">
+                  <i class="fa-solid {{ 'fa-user-slash' if u.is_active_account else 'fa-user-check' }}"></i>
+                </button>
+              </form>
+              <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}"
+                    onsubmit="return confirm('Permanently delete {{ u.full_name }}? This cannot be undone.');" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-outline-danger-soft btn-sm" title="Delete"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if not users %}
+  <div class="text-center py-5">
+    <i class="fa-solid fa-users fs-1 text-faint mb-3 d-block"></i>
+    <p class="text-soft">No patients found.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

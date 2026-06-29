@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Prediction History{% endblock %}
+{% block page_title %}Prediction History{% endblock %}
+{% block content %}
+
+<div class="glass section-card mb-4">
+  <form method="GET" class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">Search</label>
+      <div class="input-icon-group">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" name="q" class="form-control" placeholder="Search result or notes..." value="{{ search }}">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Risk Level</label>
+      <select name="risk" class="form-select">
+        <option value="">All</option>
+        <option value="Low" {{ 'selected' if risk_filter == 'Low' }}>Low</option>
+        <option value="Medium" {{ 'selected' if risk_filter == 'Medium' }}>Medium</option>
+        <option value="High" {{ 'selected' if risk_filter == 'High' }}>High</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">From</label>
+      <input type="date" name="from" class="form-control" value="{{ date_from }}">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">To</label>
+      <input type="date" name="to" class="form-control" value="{{ date_to }}">
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+      <button type="submit" class="btn btn-brand w-100"><i class="fa-solid fa-filter"></i> Filter</button>
+    </div>
+  </form>
+</div>
+
+<div class="glass section-card">
+  <div class="card-header-row">
+    <h3 class="h6 fw-bold mb-0">{{ records|length }} Result{{ 's' if records|length != 1 }}</h3>
+    <a href="{{ url_for('prediction.new') }}" class="btn btn-accent btn-sm"><i class="fa-solid fa-plus"></i> New Prediction</a>
+  </div>
+
+  {% if records %}
+  <div class="table-responsive">
+    <table class="table-elegant">
+      <thead>
+        <tr><th>Date</th><th>Result</th><th>Risk</th><th>Confidence</th><th>Key Factor</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for r in records %}
+        <tr>
+          <td>{{ r.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+          <td>{{ r.prediction }}</td>
+          <td><span class="risk-pill risk-{{ r.risk_level|lower }}">{{ r.risk_level }}</span></td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="progress" style="width:60px; height:6px; background:var(--surface-border);">
+                <div class="progress-bar" style="width:{{ r.confidence }}%; background:{{ 'var(--success)' if r.risk_level=='Low' else 'var(--warning)' if r.risk_level=='Medium' else 'var(--danger)' }};"></div>
+              </div>
+              <span style="font-size:.8rem;">{{ r.confidence }}%</span>
+            </div>
+          </td>
+          <td style="font-size:.8rem;" class="text-soft">{{ r.factors_list()[0] if r.factors_list() else '—' }}</td>
+          <td>
+            <a href="{{ url_for('prediction.result', record_id=r.id) }}" class="btn btn-ghost btn-sm" title="View"><i class="fa-solid fa-eye"></i></a>
+            <a href="{{ url_for('prediction.download_report', record_id=r.id) }}" class="btn btn-ghost btn-sm" title="Download PDF"><i class="fa-solid fa-file-pdf"></i></a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="fa-solid fa-folder-open fs-1 text-faint mb-3 d-block"></i>
+    <p class="text-soft mb-0">No predictions match your filters.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

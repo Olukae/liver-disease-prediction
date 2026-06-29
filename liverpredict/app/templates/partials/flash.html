@@ -1,0 +1,6 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="d-none" id="flashData"
+         data-messages='{{ messages | map("list") | list | tojson }}'></div>
+  {% endif %}
+{% endwith %}

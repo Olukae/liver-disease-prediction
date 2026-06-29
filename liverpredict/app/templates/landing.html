@@ -1,0 +1,124 @@
+{% extends "base_public.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<nav class="public-nav">
+  <a href="{{ url_for('main.landing') }}" class="d-flex align-items-center gap-2 text-decoration-none">
+    <span class="brand-mark"><i class="fa-solid fa-droplet-degree"></i></span>
+    <span class="font-display fw-bold fs-5" style="color:var(--ink)">LiverPredict<span style="color:var(--accent)">AI</span></span>
+  </a>
+  <div class="d-flex align-items-center gap-2">
+    <button class="icon-btn" id="darkModeToggle" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost btn-sm">Sign In</a>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-brand btn-sm">Get Started</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <span class="hero-eyebrow"><i class="fa-solid fa-circle-nodes"></i> ICT-Based Clinical Decision Support</span>
+    <h1>Predict liver disease risk <span style="color:var(--primary)">before</span> it becomes critical.</h1>
+    <p class="lede">LiverPredict AI analyzes nine key liver function markers with a machine-learning model trained on real clinical data, returning a risk level, confidence score, and personalized recommendations in seconds.</p>
+    <div class="d-flex gap-3 flex-wrap">
+      <a href="{{ url_for('auth.register') }}" class="btn btn-brand"><i class="fa-solid fa-bolt"></i> Start Free Assessment</a>
+      <a href="#how-it-works" class="btn btn-ghost">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="h-stat-value">{{ '583' }}</div><div class="h-stat-label">Clinical records trained on</div></div>
+      <div><div class="h-stat-value">9</div><div class="h-stat-label">Liver biomarkers analyzed</div></div>
+      <div><div class="h-stat-value">&lt;2s</div><div class="h-stat-label">Average prediction time</div></div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="glass p-4" style="border-radius:24px;">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <span class="fw-bold font-display">Sample Result</span>
+        <span class="risk-pill risk-medium"><i class="fa-solid fa-triangle-exclamation"></i> Medium Risk</span>
+      </div>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="confidence-ring" data-percent="87" style="width:96px; height:96px;">
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle class="ring-bg" cx="48" cy="48" r="40"></circle>
+            <circle class="ring-fg" cx="48" cy="48" r="40" style="stroke:var(--warning)"></circle>
+          </svg>
+          <div class="ring-label"><span class="fw-bold font-display" style="font-size:1.2rem;">87%</span></div>
+        </div>
+        <div>
+          <div class="fw-bold mb-1">Confidence Score</div>
+          <div class="text-soft" style="font-size:.85rem;">Based on elevated ALT and total bilirubin</div>
+        </div>
+      </div>
+      <div class="divider-soft mb-3"></div>
+      <div class="text-soft" style="font-size:.85rem;"><i class="fa-solid fa-circle-check text-success me-1"></i> Recommendation: Schedule a follow-up liver panel within 4-6 weeks.</div>
+    </div>
+    <div class="float-card glass d-none d-md-block" style="top:-10px; right:0; animation-delay:1s;">
+      <i class="fa-solid fa-vial text-primary"></i> <strong>9</strong> parameters
+    </div>
+    <div class="float-card glass d-none d-md-block" style="bottom:10px; left:-20px; animation-delay:2s;">
+      <i class="fa-solid fa-shield-heart" style="color:var(--accent)"></i> HIPAA-aware design
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works" class="py-4">
+  <div class="section-title-wrap">
+    <span class="badge-soft badge-soft-primary mb-2 d-inline-block">How It Works</span>
+    <h2 class="font-display fw-bold">From test values to insight in three steps</h2>
+  </div>
+  <div class="feature-grid">
+    <div class="feature-card glass">
+      <div class="feature-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+      <h3 class="h5 fw-bold">1. Enter Test Values</h3>
+      <p class="text-soft mb-0">Input bilirubin, enzyme, and protein levels through a guided, validated multi-step form — with optional voice input.</p>
+    </div>
+    <div class="feature-card glass">
+      <div class="feature-icon" style="background:linear-gradient(135deg, var(--accent), #0d9488);"><i class="fa-solid fa-brain"></i></div>
+      <h3 class="h5 fw-bold">2. AI Model Analysis</h3>
+      <p class="text-soft mb-0">A scikit-learn classifier trained on the Indian Liver Patient Dataset scores your profile against clinical patterns.</p>
+    </div>
+    <div class="feature-card glass">
+      <div class="feature-icon" style="background:linear-gradient(135deg, var(--warning), #f97316);"><i class="fa-solid fa-file-medical"></i></div>
+      <h3 class="h5 fw-bold">3. Get Actionable Insight</h3>
+      <p class="text-soft mb-0">Receive a risk level, contributing factors, recommendations, and a downloadable PDF report — all saved to your history.</p>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="section-title-wrap">
+    <span class="badge-soft badge-soft-primary mb-2 d-inline-block">Platform</span>
+    <h2 class="font-display fw-bold">Built for patients and clinicians alike</h2>
+  </div>
+  <div class="feature-grid">
+    {% set features = [
+      ("fa-shield-halved", "Secure Accounts", "Registration, login, and password reset with hashed credentials."),
+      ("fa-clock-rotate-left", "Prediction History", "Search, filter by date and risk, and revisit every past assessment."),
+      ("fa-file-pdf", "PDF Reports", "Export a clinic-ready report with parameters, results, and recommendations."),
+      ("fa-chart-pie", "Admin Analytics", "Risk distribution, usage trends, and parameter analysis dashboards."),
+      ("fa-robot", "AI Health Assistant", "A built-in chat widget explains your markers and results in plain language."),
+      ("fa-moon", "Dark Mode", "A refined dark theme for low-light, late-shift clinical use."),
+    ] %}
+    {% for icon, title, text in features %}
+    <div class="feature-card glass">
+      <div class="feature-icon"><i class="fa-solid {{ icon }}"></i></div>
+      <h3 class="h6 fw-bold">{{ title }}</h3>
+      <p class="text-soft mb-0" style="font-size:.88rem;">{{ text }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="py-5 text-center">
+  <div class="glass mx-auto p-5" style="max-width:760px; border-radius:28px;">
+    <h2 class="font-display fw-bold mb-2">Ready to check your liver health?</h2>
+    <p class="text-soft mb-4">Create a free account and run your first prediction in under a minute.</p>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-brand"><i class="fa-solid fa-arrow-right"></i> Create Free Account</a>
+  </div>
+</section>
+
+<footer class="site-footer text-center">
+  <p class="text-faint mb-1" style="font-size:.82rem;">LiverPredict AI is a clinical decision-support tool and does not replace professional medical diagnosis.</p>
+  <p class="text-faint mb-0" style="font-size:.8rem;">&copy; {{ current_year }} LiverPredict AI. All rights reserved.</p>
+</footer>
+{% endblock %}

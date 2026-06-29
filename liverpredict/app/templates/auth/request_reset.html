@@ -1,0 +1,38 @@
+{% extends "base_public.html" %}
+{% block title %}Reset Password{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="glass auth-card">
+    <div class="text-center mb-4">
+      <span class="brand-mark mb-2 d-inline-flex"><i class="fa-solid fa-key"></i></span>
+    </div>
+    <h1 class="h3 font-display fw-bold text-center mb-1">Forgot Password?</h1>
+    <p class="text-soft text-center mb-4" style="font-size:.9rem;">Enter your email and we'll send you a reset link.</p>
+
+    <form method="POST" novalidate data-loading-btn>
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+        <label class="form-label">{{ form.email.label }}</label>
+        <div class="input-icon-group">
+          <i class="fa-solid fa-envelope"></i>
+          {{ form.email(class="form-control", placeholder="you@example.com") }}
+        </div>
+        {% for e in form.email.errors %}<div class="invalid-feedback-custom">{{ e }}</div>{% endfor %}
+      </div>
+      {{ form.submit(class="btn btn-brand w-100") }}
+    </form>
+
+    {% if reset_link %}
+    <div class="glass mt-4 p-3" style="border-radius:14px; background:rgba(20,184,166,0.08);">
+      <p class="mb-2 fw-bold" style="font-size:.85rem;"><i class="fa-solid fa-circle-info text-accent"></i> Demo mode — no email server configured</p>
+      <p class="text-soft mb-2" style="font-size:.82rem;">Use this link to reset your password (valid for 1 hour):</p>
+      <a href="{{ reset_link }}" class="d-block text-break" style="font-size:.8rem;">{{ reset_link }}</a>
+    </div>
+    {% endif %}
+
+    <p class="text-center text-soft mt-4 mb-0" style="font-size:.88rem;">
+      <a href="{{ url_for('auth.login') }}" class="fw-bold"><i class="fa-solid fa-arrow-left me-1"></i>Back to Sign In</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
