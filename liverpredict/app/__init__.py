@@ -86,3 +86,4 @@ def _ensure_admin(app):
             f"Created default admin account: {app.config['ADMIN_EMAIL']} / "
             f"{app.config['ADMIN_PASSWORD']} (change this immediately)"
         )
+app = create_app()
